@@ -1,22 +1,13 @@
-import socket			 
-s = socket.socket()		 
-print("Socket successfully created")
+import socket  
 
-port = 11500			
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  
+s.bind(('', 11500))  
 
-s.bind(('', port))		 
-print("Socket binded to %s" % (port)) 
-
-s.listen(5)	 
-print("Socket is listening")		 
-
-while True: 
-    c, addr = s.accept()	 
-    print('Got connection from', addr)
- 
-    c.send('Thank you for connecting'.encode()) 
-
-    message = c.recv(1024).decode()
-    print("Message from client:", message)
-
-    c.close()
+while True:
+    data, addr = s.recvfrom(1024)  
+    message = data.decode()
+    char_count = len(message)
+    response = f"{char_count} {message.upper()}"
+    
+    print(f"Received message from {addr}: {message} ({char_count} characters)")  
+    s.sendto(response.encode(), addr)  
